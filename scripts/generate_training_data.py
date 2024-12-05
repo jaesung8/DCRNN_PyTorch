@@ -54,7 +54,11 @@ def generate_graph_seq2seq_io_data(
 
 
 def generate_train_val_test(args):
-    df = pd.read_hdf(args.traffic_df_filename)
+    if args.traffic_df_filename.endswith('.h5'):
+        df = pd.read_hdf(args.traffic_df_filename)
+    else:
+        df = pd.read_csv(args.traffic_df_filename, index_col='Datetime')
+        df.index = pd.to_datetime(df.index)
     # 0 is the latest observed sample.
     x_offsets = np.sort(
         # np.concatenate(([-week_size + 1, -day_size + 1], np.arange(-11, 1, 1)))
